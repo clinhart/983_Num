@@ -284,6 +284,7 @@ public:
         result += z1 - z2 - z0;
         result <<= m2;
         result += z0;
+        result.neg = (a.neg != b.neg);
         return result;
     }
 
