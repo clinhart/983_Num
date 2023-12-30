@@ -462,10 +462,28 @@ public:
         a >>= n;
         b >>= n;
 
+        int subUnswappedCount = 0;
         do {
+            if (a.size() == 1 && b.size() == 1) {
+                return Num(1, word_gcd(a[0], b[0])) <<= n;
+            }
             b >>= b.count_trailing_zeros();
-            if (cmp_abs(a, b) > 0) a.words.swap(b.words);
-            sub_unsigned_overwrite(b, a);
+            if (cmp_abs(a, b) > 0) {
+                a.words.swap(b.words);
+                subUnswappedCount = 0;
+            }
+#if 1
+            if (subUnswappedCount > 128) {
+                //no swap since the last 128 subs. Before doing a longer series of sub, do mod
+                Num rest = mod(b, a);
+                b = rest;
+            } else {
+#endif
+                sub_unsigned_overwrite(b, a);
+                ++subUnswappedCount;
+#if 1
+            }
+#endif
         } while (b.size() > 0);
 
         a <<= n;

@@ -2,6 +2,8 @@
 
 #include "num.hpp"
 
+#define RAT_ENABLE_REDUCE
+
 struct Rat {
     Num num, den;
 
@@ -16,11 +18,13 @@ struct Rat {
     }
 
     void reduce(){
+#ifdef RAT_ENABLE_REDUCE
         Num a = Num::gcd(num, den);
         if (a != 1){
             num /= a;
             den /= a;
         }
+#endif
     }
 
     Rat inv() const {
@@ -28,11 +32,19 @@ struct Rat {
     }
 
     static Rat add(const Rat &a, const Rat &b){
-        return Rat(a.num * b.den + a.den*b.num, a.den * b.den);
+        if (a.den == b.den) {
+            return Rat(a.num + b.num, a.den);
+        } else {
+            return Rat(a.num * b.den + a.den * b.num, a.den * b.den);
+        }
     }
 
     static Rat sub(const Rat &a, const Rat &b){
-        return Rat(a.num * b.den - a.den*b.num, a.den * b.den);
+        if (a.den == b.den) {
+            return Rat(a.num - b.num, a.den);
+        } else {
+            return Rat(a.num * b.den - a.den * b.num, a.den * b.den);
+        }
     }
 
     static Rat mul(const Rat &a, const Rat &b){
